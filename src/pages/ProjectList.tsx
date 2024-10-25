@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Battery, X } from 'lucide-react';
+import { Users, Battery, X, MapPin, Info } from 'lucide-react';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
+  const [isInvestPopupOpen, setIsInvestPopupOpen] = useState(false);
+  const [isDetailsPopupOpen, setIsDetailsPopupOpen] = useState(false); // New state for details popup
   const [newProject, setNewProject] = useState({
     name: '',
     location: '',
@@ -16,11 +18,11 @@ const ProjectList = () => {
     costPerShare: '',
     totalShares: '',
     image: '',
-    userId:'',
+    userId: '',
+    description: '', // Add description field
   });
-  const [selectedLocation, setSelectedLocation] = useState('All Locations');
-  const [selectedCapacity, setSelectedCapacity] = useState('All Capacities');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedShares, setSelectedShares] = useState(0);
   const [projectAdded, setProjectAdded] = useState(false);
 
   useEffect(() => {
@@ -32,6 +34,17 @@ const ProjectList = () => {
   const toggleAddProjectPopup = () => {
     setIsAddProjectOpen(!isAddProjectOpen);
     setProjectAdded(false);
+  };
+
+  const toggleInvestPopup = (project) => {
+    setSelectedProject(project);
+    setIsInvestPopupOpen(!isInvestPopupOpen);
+    setSelectedShares(0);
+  };
+
+  const toggleDetailsPopup = (project) => {
+    setSelectedProject(project);
+    setIsDetailsPopupOpen(!isDetailsPopupOpen);
   };
 
   const handleInputChange = (e) => {
@@ -46,7 +59,6 @@ const ProjectList = () => {
     localStorage.setItem('projects', JSON.stringify(updatedProjects));
     setIsAddProjectOpen(false);
     setProjectAdded(true);
-
     setNewProject({
       name: '',
       location: '',
@@ -58,78 +70,26 @@ const ProjectList = () => {
       costPerShare: '',
       totalShares: '',
       image: '',
-      userId:'',
+      userId: '',
+      description: '', // Reset description
     });
   };
 
-  const handleFilter = () => {
-    let filtered = projects;
-
-    if (selectedLocation !== 'All Locations') {
-      filtered = filtered.filter(project => project.location.includes(selectedLocation));
-    }
-
-    if (selectedCapacity !== 'All Capacities') {
-      filtered = filtered.filter((project) => {
-        const capacityValue = parseInt(project.capacity);
-        if (selectedCapacity === '0-250kW') return capacityValue <= 250;
-        if (selectedCapacity === '251-500kW') return capacityValue > 250 && capacityValue <= 500;
-        return capacityValue > 500;
-      });
-    }
-
-    if (searchQuery) {
-      filtered = filtered.filter(project =>
-        project.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    setFilteredProjects(filtered);
+  const handleInvestment = () => {
+    console.log('Invest Now:', selectedProject, selectedShares);
+    setIsInvestPopupOpen(false);
+    alert(`Invested in ${selectedShares} shares!`);
   };
 
-  useEffect(() => {
-    handleFilter();
-  }, [selectedLocation, selectedCapacity, searchQuery, projects]);
+  const totalCheckoutAmount = selectedProject && selectedShares * selectedProject.costPerShare;
 
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Solar Projects</h1>
-        <div className="flex gap-4">
-          <input 
-            type="text" 
-            placeholder="Search projects..." 
-            value={searchQuery} 
-            onChange={(e) => setSearchQuery(e.target.value)} 
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
-          <button 
-            onClick={toggleAddProjectPopup} 
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Add Project
-          </button>
-          <select 
-            value={selectedLocation} 
-            onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          >
-            <option>All Locations</option>
-            <option>Colorado</option>
-            <option>Texas</option>
-            <option>Arizona</option>
-          </select>
-          <select 
-            value={selectedCapacity} 
-            onChange={(e) => setSelectedCapacity(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          >
-            <option>All Capacities</option>
-            <option>0-250kW</option>
-            <option>251-500kW</option>
-            <option>501kW+</option>
-          </select>
-        </div>
+        <button onClick={toggleAddProjectPopup} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+          Add Project
+        </button>
       </div>
 
       {/* Project Grid */}
@@ -137,18 +97,14 @@ const ProjectList = () => {
         {filteredProjects.map((project) => (
           <div key={project.id} className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="h-48 overflow-hidden">
-              <img 
-                src={project.image || 'https://via.placeholder.com/800'} 
-                alt={project.name}
-                className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-              />
+              <img src={project.image || 'https://via.placeholder.com/800'} alt={project.name} className="w-full h-full object-cover" />
             </div>
             <div className="p-6 space-y-4">
               <h3 className="text-xl font-semibold text-gray-900">{project.name}</h3>
               <p className="text-gray-600">{project.location}</p>
-              <p className="text-gray-600">Cost per Share: {project.costPerShare}</p>
+              <p className="text-gray-600">Cost per Share: ${project.costPerShare}</p>
               <p className="text-gray-600">Total Shares: {project.totalShares}</p>
-              
+
               <div className="flex justify-between items-center text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Battery className="h-5 w-5 text-yellow-500" />
@@ -166,10 +122,7 @@ const ProjectList = () => {
                   <span>{project.progress}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-yellow-500 h-2 rounded-full" 
-                    style={{ width: `${project.progress}%` }}
-                  ></div>
+                  <div className="bg-yellow-500 h-2 rounded-full" style={{ width: `${project.progress}%` }}></div>
                 </div>
               </div>
 
@@ -178,8 +131,23 @@ const ProjectList = () => {
                   <p className="text-sm text-gray-600">Expected Returns</p>
                   <p className="text-lg font-semibold text-green-500">{project.returns}</p>
                 </div>
-                <button className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                <button onClick={() => toggleInvestPopup(project)} className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
                   Invest Now
+                </button>
+              </div>
+
+              <div className="flex justify-between pt-4">
+                <button
+                  onClick={() => window.open(`https://maps.google.com/?q=${project.location}`, '_blank')}
+                  className="flex items-center text-blue-500 hover:text-blue-700"
+                >
+                  <MapPin className="h-5 w-5 mr-1" /> Location on Map
+                </button>
+                <button
+                  onClick={() => toggleDetailsPopup(project)}
+                  className="flex items-center text-blue-500 hover:text-blue-700"
+                >
+                  <Info className="h-5 w-5 mr-1" /> Project Details
                 </button>
               </div>
             </div>
@@ -187,102 +155,49 @@ const ProjectList = () => {
         ))}
       </div>
 
-      {/* Add Project Popup */}
-      {isAddProjectOpen && (
+      {/* Project Details Popup */}
+      {isDetailsPopupOpen && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
-            <button onClick={toggleAddProjectPopup} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+            <button onClick={() => setIsDetailsPopupOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
               <X className="h-6 w-6" />
             </button>
-            <h2 className="text-2xl font-bold mb-4">Add New Project</h2>
-            <div className="space-y-4">
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Project Name" 
-                value={newProject.name} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="location" 
-                placeholder="Location" 
-                value={newProject.location} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="capacity" 
-                placeholder="Capacity (e.g., 500kW)" 
-                value={newProject.capacity} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="investment" 
-                placeholder="Investment (e.g., $250,000)" 
-                value={newProject.investment} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="number" 
-                name="progress" 
-                placeholder="Progress (%)" 
-                value={newProject.progress} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="returns" 
-                placeholder="Expected Returns (e.g., 8.5%)" 
-                value={newProject.returns} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="costPerShare" 
-                placeholder="Cost per Share" 
-                value={newProject.costPerShare} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="totalShares" 
-                placeholder="Total Shares Available" 
-                value={newProject.totalShares} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input 
-                type="text" 
-                name="image" 
-                placeholder="Image URL" 
-                value={newProject.image} 
-                onChange={handleInputChange} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <button 
-                onClick={handleAddProject} 
-                className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors mt-4"
-              >
-                Add Project
-              </button>
-            </div>
+            <h2 className="text-2xl font-bold mb-4">{selectedProject.name}</h2>
+            <p className="text-gray-600 mb-4">{selectedProject.description || 'No description provided.'}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Invest Popup */}
+      {isInvestPopupOpen && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
+            <button onClick={() => setIsInvestPopupOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+              <X className="h-6 w-6" />
+            </button>
+            <h2 className="text-2xl font-bold mb-4">Invest in {selectedProject.name}</h2>
+            <p className="text-gray-600 mb-2">Cost per Share: ${selectedProject.costPerShare}</p>
+            <input
+              type="number"
+              placeholder="Enter number of shares"
+              value={selectedShares}
+              onChange={(e) => setSelectedShares(Number(e.target.value))}
+              className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            />
+            <p className="text-gray-600">Total Checkout Amount: ${totalCheckoutAmount || 0}</p>
+            <button onClick={handleInvestment} className="w-full mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+              Make Payment
+            </button>
           </div>
         </div>
       )}
 
       {/* Project Added Success Message */}
       {projectAdded && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
-          Project added successfully!
+        <div className="fixed inset-x-0 top-4 flex justify-center z-50">
+          <div className="bg-green-500 text-white px-6 py-2 rounded-lg">
+            Project successfully added!
+          </div>
         </div>
       )}
     </div>
@@ -290,3 +205,4 @@ const ProjectList = () => {
 };
 
 export default ProjectList;
+// Compare this snippet from SolarShare/src/pages/ProjectDetails.tsx:
