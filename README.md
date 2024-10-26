@@ -58,7 +58,6 @@ Through this platform, users are empowered to support sustainable energy project
    ```bash
    https://github.com/Vishnuzdubey/SolarShare.git
 ```
-```bash
   npm install
 ```
 ```bash
@@ -113,4 +112,13 @@ Through this platform, users are empowered to support sustainable energy project
 - **Home Page**:
   ![Home Page](https://github.com/user-attachments/assets/34f4cde9-0549-49ce-809f-96aa45a17536)
 
+## Video Demonstration
+
+For a full walkthrough of the platform, watch the demo video on YouTube: [Community Solar Sharing Platform Demo](https://youtu.be/zVO6ivfWMss?si=0ltJlBS8eAkJ8DTU)
+
+---
+
+## License
+
+This project is licensed under the MIT License.
 
