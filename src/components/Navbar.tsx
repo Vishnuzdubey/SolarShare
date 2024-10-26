@@ -201,7 +201,7 @@ const Navbar = () => {
                 <Link to="/projects" className="text-gray-600 hover:text-yellow-500">Projects</Link>
                 <Link to="/marketplace" className="text-gray-600 hover:text-yellow-500">Marketplace</Link>
                 <Link to="/profile" className="text-gray-600 hover:text-yellow-500">Profile</Link>
-                
+                <Link to="/community" className="text-gray-600 hover:text-yellow-500">Community</Link>
                 {/* Wallet Button */}
                 <button
                   onClick={toggleWallet}
@@ -239,6 +239,7 @@ const Navbar = () => {
                 <Link to="/projects" className="block py-2 text-gray-600">Projects</Link>
                 <Link to="/marketplace" className="block py-2 text-gray-600">Marketplace</Link>
                 <Link to="/profile" className="block py-2 text-gray-600">Profile</Link>
+                <Link to="/community" className="text-gray-600 hover:text-yellow-500">Community</Link>
                 <button
                   onClick={toggleWallet}
                   className="w-full text-gray-600 flex items-center py-2"

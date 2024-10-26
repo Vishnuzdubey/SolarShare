@@ -33,7 +33,88 @@ const Marketplace = () => {
       reviews: 234,
       price: 149.99,
       image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800'
-    }
+    },
+    {
+      id: 4,
+      name: 'Smart Solar Monitor',
+      manufacturer: 'SunTrack',
+      rating: 4.9,
+      reviews: 234,
+      price: 149.99,
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      id: 5,
+      name: 'Smart Solar Monitor',
+      manufacturer: 'SunTrack',
+      rating: 4.9,
+      reviews: 234,
+      price: 149.99,
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      "id": 6,
+      "name": "Efficient Solar Charger",
+      "manufacturer": "ChargeUp",
+      "rating": 4.8,
+      "reviews": 120,
+      "price": 129.99,
+      "image": "https://images.unsplash.com/photo-1573496615880-8f0c7b4d58af?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 7,
+      "name": "Multi-Device Solar Charger",
+      "manufacturer": "EcoCharge",
+      "rating": 4.6,
+      "reviews": 210,
+      "price": 149.99,
+      "image": "https://images.unsplash.com/photo-1527606184853-9d86806b5686?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 8,
+      "name": "Advanced Solar Monitoring System",
+      "manufacturer": "SunGenius",
+      "rating": 4.9,
+      "reviews": 300,
+      "price": 199.99,
+      "image": "https://images.unsplash.com/photo-1559586117-0c69fc8feea6?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 9,
+      "name": "Heavy-Duty Solar Battery",
+      "manufacturer": "SolarPowerTech",
+      "rating": 4.7,
+      "reviews": 150,
+      "price": 599.99,
+      "image": "https://images.unsplash.com/photo-1554774853-2547b1a603f4?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 10,
+      "name": "Solar Power Station",
+      "manufacturer": "PowerMax",
+      "rating": 4.6,
+      "reviews": 89,
+      "price": 799.99,
+      "image": "https://images.unsplash.com/photo-1514823775796-d1d25f1d9b70?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 11,
+      "name": "Portable Solar Panel Charger",
+      "manufacturer": "SolarLite",
+      "rating": 4.4,
+      "reviews": 190,
+      "price": 99.99,
+      "image": "https://images.unsplash.com/photo-1522252234503-e356532cafd5?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 12,
+      "name": "Solar Inverter Max",
+      "manufacturer": "VoltPlus",
+      "rating": 4.5,
+      "reviews": 160,
+      "price": 349.99,
+      "image": "https://images.unsplash.com/photo-1581094288336-9e36cf2abf7d?auto=format&fit=crop&q=80&w=800"
+    },
   ];
 
   const addToCart = (product) => {
