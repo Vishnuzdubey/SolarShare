@@ -53,7 +53,6 @@ const ProjectList = () => {
   };
 
   const handleAddProject = () => {
-    // Validation: Ensure all required fields are filled
     if (!newProject.name || !newProject.location || !newProject.costPerShare) {
       alert('Please fill in all required fields.');
       return;
@@ -82,7 +81,19 @@ const ProjectList = () => {
   };
 
   const handleInvestment = () => {
-    console.log('Invest Now:', selectedProject, selectedShares);
+    const updatedProject = {
+      ...selectedProject,
+      investors: selectedProject.investors + 1,
+      progress: selectedProject.progress + (selectedShares / selectedProject.totalShares) * 100,
+    };
+
+    const updatedProjects = projects.map((project) =>
+      project.id === selectedProject.id ? updatedProject : project
+    );
+
+    setProjects(updatedProjects);
+    setFilteredProjects(updatedProjects);
+    localStorage.setItem('projects', JSON.stringify(updatedProjects));
     setIsInvestPopupOpen(false);
     alert(`Invested in ${selectedShares} shares!`);
   };
@@ -98,7 +109,6 @@ const ProjectList = () => {
         </button>
       </div>
 
-      {/* Project Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredProjects.map((project) => (
           <div key={project.id} className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -161,7 +171,6 @@ const ProjectList = () => {
         ))}
       </div>
 
-      {/* Add Project Popup */}
       {isAddProjectOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
@@ -212,44 +221,45 @@ const ProjectList = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
-            <textarea
-              name="description"
-              placeholder="Description"
-              value={newProject.description}
+            <input
+              type="text"
+              name="returns"
+              placeholder="Expected Returns"
+              value={newProject.returns}
               onChange={handleInputChange}
               className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
-            <button onClick={handleAddProject} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+            <button onClick={handleAddProject} className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
               Add Project
             </button>
           </div>
         </div>
       )}
 
-      {/* Investment Popup */}
       {isInvestPopupOpen && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
-            <button onClick={() => setIsInvestPopupOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+            <button onClick={toggleInvestPopup} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
               <X className="h-6 w-6" />
             </button>
             <h2 className="text-2xl font-bold mb-4">Invest in {selectedProject.name}</h2>
+            <p>Cost per Share: ${selectedProject.costPerShare}</p>
+            <p>Total Shares: {selectedProject.totalShares}</p>
             <input
               type="number"
+              placeholder="Number of Shares"
               value={selectedShares}
               onChange={(e) => setSelectedShares(Number(e.target.value))}
-              placeholder="Number of Shares"
               className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
-            <p>Total Amount: ${totalCheckoutAmount}</p>
-            <button onClick={handleInvestment} className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
-              Confirm Investment
+            <p>Total Cost: ${totalCheckoutAmount}</p>
+            <button onClick={handleInvestment} className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+              Invest Now
             </button>
           </div>
         </div>
       )}
 
-      {/* Project Details Popup */}
       {isDetailsPopupOpen && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
@@ -257,13 +267,10 @@ const ProjectList = () => {
               <X className="h-6 w-6" />
             </button>
             <h2 className="text-2xl font-bold mb-4">{selectedProject.name}</h2>
-            <p><strong>Location:</strong> {selectedProject.location}</p>
-            <p><strong>Capacity:</strong> {selectedProject.capacity} kW</p>
-            <p><strong>Investment:</strong> ${selectedProject.investment}</p>
-            <p><strong>Progress:</strong> {selectedProject.progress}%</p>
-            <p><strong>Investors:</strong> {selectedProject.investors}</p>
-            <p><strong>Expected Returns:</strong> {selectedProject.returns}</p>
-            <p><strong>Description:</strong> {selectedProject.description}</p>
+            <p>{selectedProject.description}</p>
+            <button onClick={() => setIsDetailsPopupOpen(false)} className="mt-4 w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 transition-colors">
+              Close
+            </button>
           </div>
         </div>
       )}
